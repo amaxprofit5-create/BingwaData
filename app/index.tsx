@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import PromotionsScreen from './promotions';
 
 const Tab = createBottomTabNavigator();
 
@@ -504,6 +505,16 @@ function MainNavigator() {
           }}
         >
           {() => <TransactionHistoryScreen transactions={transactions} theme={theme} />}
+        </Tab.Screen>
+        <Tab.Screen
+          name="Promotions"
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons name={focused ? 'gift' : 'gift-outline'} size={size} color={color} />
+            ),
+          }}
+        >
+          {() => <PromotionsScreen theme={theme} />}
         </Tab.Screen>
         <Tab.Screen
           name="About"
