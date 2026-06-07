@@ -12,8 +12,11 @@ import {
   Animated,
   ActivityIndicator,
   Switch,
+  useWindowDimensions,
 } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useDrawerStatus } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import PromotionsScreen from './promotions';
 
@@ -426,6 +429,9 @@ function MainNavigator() {
   const [isDark, setIsDark] = useState(false);
   const toggleTheme = () => setIsDark(!isDark);
   const theme = isDark ? darkTheme : lightTheme;
+  const { width } = useWindowDimensions();
+  const navigation = useNavigation();
+  const isMobile = width < 768;
 
   // Transactions state for history
   interface Transaction {
@@ -443,9 +449,17 @@ function MainNavigator() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Global header with dark mode switch */}
+      {/* Global header with hamburger menu and dark mode switch */}
       <View style={[styles.globalHeader, { backgroundColor: theme.globalHeaderBackground, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 15 }]}>
-        <Text style={[styles.globalHeaderText, { color: theme.globalHeaderText }]}>Bingwa Data</Text>
+        {isMobile && (
+          <TouchableOpacity
+            onPress={() => navigation.toggleDrawer?.()}
+            style={styles.hamburgerButton}
+          >
+            <Ionicons name="menu" size={28} color={theme.globalHeaderText} />
+          </TouchableOpacity>
+        )}
+        <Text style={[styles.globalHeaderText, { color: theme.globalHeaderText, flex: 1, marginLeft: isMobile ? 10 : 0 }]}>Bingwa Data</Text>
         <Switch value={isDark} onValueChange={toggleTheme} />
       </View>
       <Tab.Navigator
@@ -455,22 +469,22 @@ function MainNavigator() {
           tabBarInactiveTintColor: '#C8E6C9',
           tabBarStyle: {
             backgroundColor: '#2E7D32',
-            height: 70,
+            height: isMobile ? 60 : 70,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             position: 'absolute',
-            left: 10,
-            right: 10,
-            bottom: 10,
+            left: isMobile ? 5 : 10,
+            right: isMobile ? 5 : 10,
+            bottom: isMobile ? 5 : 10,
           },
-          tabBarLabelStyle: { marginBottom: 10, fontSize: 14 },
+          tabBarLabelStyle: { marginBottom: isMobile ? 5 : 10, fontSize: isMobile ? 10 : 14 },
         }}
       >
         <Tab.Screen
           name="Bundles"
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? 'basket' : 'basket-outline'} size={size} color={color} />
+              <Ionicons name={focused ? 'basket' : 'basket-outline'} size={isMobile ? 20 : size} color={color} />
             ),
           }}
         >
@@ -480,7 +494,7 @@ function MainNavigator() {
           name="Minutes"
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? 'time' : 'time-outline'} size={size} color={color} />
+              <Ionicons name={focused ? 'time' : 'time-outline'} size={isMobile ? 20 : size} color={color} />
             ),
           }}
         >
@@ -490,7 +504,7 @@ function MainNavigator() {
           name="SMS"
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? 'chatbubble' : 'chatbubble-outline'} size={size} color={color} />
+              <Ionicons name={focused ? 'chatbubble' : 'chatbubble-outline'} size={isMobile ? 20 : size} color={color} />
             ),
           }}
         >
@@ -500,7 +514,7 @@ function MainNavigator() {
           name="History"
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? 'list' : 'list-outline'} size={size} color={color} />
+              <Ionicons name={focused ? 'list' : 'list-outline'} size={isMobile ? 20 : size} color={color} />
             ),
           }}
         >
@@ -510,7 +524,7 @@ function MainNavigator() {
           name="Promotions"
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? 'gift' : 'gift-outline'} size={size} color={color} />
+              <Ionicons name={focused ? 'gift' : 'gift-outline'} size={isMobile ? 20 : size} color={color} />
             ),
           }}
         >
@@ -520,7 +534,7 @@ function MainNavigator() {
           name="About"
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} size={size} color={color} />
+              <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} size={isMobile ? 20 : size} color={color} />
             ),
           }}
         >
@@ -542,6 +556,10 @@ export default function AppNavigator() {
 
 /* ---------- Styles ---------- */
 const styles = StyleSheet.create({
+  hamburgerButton: {
+    padding: 8,
+    marginRight: 8,
+  },
   globalHeader: {
     height: 60,
     alignItems: 'center',
