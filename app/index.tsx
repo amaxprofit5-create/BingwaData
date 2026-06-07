@@ -448,12 +448,18 @@ function MainNavigator() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: theme.containerBackground }}>
       {/* Global header with hamburger menu and dark mode switch */}
       <View style={[styles.globalHeader, { backgroundColor: theme.globalHeaderBackground, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 15 }]}>
         {isMobile && (
           <TouchableOpacity
-            onPress={() => navigation.toggleDrawer?.()}
+            onPress={() => {
+              try {
+                navigation?.toggleDrawer?.();
+              } catch (e) {
+                console.log('[v0] Drawer toggle error:', e);
+              }
+            }}
             style={styles.hamburgerButton}
           >
             <Ionicons name="menu" size={28} color={theme.globalHeaderText} />
